@@ -1,14 +1,22 @@
-using System.Collections.Generic;
+using CalendarAggregator.Utilities;
+using Ical.Net;
+using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Ical.Net;
 using System;
-using Ical.Net.Serialization;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var app = builder.Build();
+List<Source> calendarMappings = [
+    new IcsSource
+    {
+        FriendlyName = "Pathfinders",
+        Guid = new Guid("a78d5d36-4192-496d-b2b5-83203a2174ae"),
+        IcsUrl = ""
+    }
+];
 
 app.MapGet("/calendar", async (HttpContext context) =>
 {
@@ -24,12 +32,10 @@ app.MapGet("/calendar", async (HttpContext context) =>
         return;
     }
 
-    List<(string friendlyName, Guid Guid, string url)> calendarMappings = [
-        ("Pathfinders", new Guid("a78d5d36-4192-496d-b2b5-83203a2174ae"), "")
-    ];
-
-    var masterCalendar = new Calendar();
-    masterCalendar.ProductId = "-//WollongongSDA//Calendar Aggregator//EN";
+    var masterCalendar = new Calendar
+    {
+        ProductId = "-//WollongongSDA//Calendar Aggregator//EN"
+    };
     masterCalendar.AddProperty("X-WR-CALNAME", "My Church Calendar");
 
     foreach (var item in calendars)
@@ -41,20 +47,10 @@ app.MapGet("/calendar", async (HttpContext context) =>
             return;
         }
         var calendarMapping = calendarMappings.First(x => x.Guid == guid);
-        var ics = "";
 
-        using (var client = new HttpClient())
-        {
-            ics = await client.GetStringAsync(calendarMapping.url);
-        }
+        var events = await calendarMapping.GetEvents();
 
-        var calendar = Calendar.Load(ics);
-        foreach (var Event in calendar.Events)
-        {
-            Event.Summary = $"{Event.Summary} ({calendarMapping.friendlyName})";
-        }
-
-        masterCalendar.Events.AddRange(calendar.Events);
+        masterCalendar.Events.AddRange(events);
     }
 
     var serializer = new CalendarSerializer();
@@ -63,7 +59,6 @@ app.MapGet("/calendar", async (HttpContext context) =>
     context.Response.StatusCode = 200;
     context.Response.ContentType = "text/calendar";
     await context.Response.WriteAsync(serializedCalendar);
-    return;
 });
 
 app.Run();
