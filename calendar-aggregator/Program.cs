@@ -1,22 +1,45 @@
+using CalendarAggregator.Source;
 using Ical.Net;
 using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CalendarAggregator.Source;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var app = builder.Build();
-List<Source> calendarMappings = [
-    new Microsoft365GroupSource(builder.Configuration.GetSection("WollongongSDAEntra"))
+var graphConfig = builder.Configuration.GetSection("GraphCredentials");
+List<Source> calendarMappings = [];
+
+// TODO: Low priority to validate this here as we're in a rush, but probably should be done
+foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildren())
+{
+    switch (calendar["Type"])
     {
-        FriendlyName = "Pathfinders",
-        Guid = new Guid("58e4f071-6ff4-4a60-8ee6-20594de0e68c"),
-        GroupId = "b843c94a-1d07-4016-be58-8d23d49e8fc4"
+        case "MS365Group":
+            calendarMappings.Add(new Microsoft365GroupSource(graphConfig.GetSection(calendar["MS365GroupCred"]!))
+            {
+                FriendlyName = calendar["FriendlyName"]!,
+                Guid = new Guid(calendar["Guid"]!),
+                GroupId = calendar["GroupId"]!
+            });
+            break;
+        case "ICS":
+            calendarMappings.Add(new IcsSource()
+            {
+                FriendlyName = calendar["FriendlyName"]!,
+                Guid = new Guid(calendar["Guid"]!),
+                IcsUrl = calendar["IcsUrl"]!
+            });
+            break;
+        default:
+            throw new InvalidConfigurationException("Unrecognised calendar Type");
     }
-];
+
+    Console.WriteLine($"CALENDAR: {calendar["FriendlyName"]} configured as {calendar["Guid"]}");
+}
 
 app.MapGet("/calendar", async (HttpContext context) =>
 {
