@@ -34,7 +34,7 @@ app.MapGet("/calendar", async (HttpContext context) =>
 
     var masterCalendar = new Calendar
     {
-        ProductId = "-//WollongongSDA//Calendar Aggregator//EN"
+        ProductId = "-//WollongongSDA//Calendar Aggregator//EN" // subject to https://github.com/ical-org/ical.net/issues/531
     };
     masterCalendar.AddProperty("X-WR-CALNAME", "My Church Calendar");
 
@@ -46,10 +46,10 @@ app.MapGet("/calendar", async (HttpContext context) =>
             await context.Response.WriteAsync("ID invalid");
             return;
         }
-        var calendarMapping = calendarMappings.First(x => x.Guid == guid);
+        var mapping = calendarMappings.First(x => x.Guid == guid);
 
-        var events = await calendarMapping.GetEvents();
-
+        var events = await mapping.GetEvents();
+        events.ForEach(e => e.AddProperty("X-WSDA-MAP", mapping.Guid.ToString()));
         masterCalendar.Events.AddRange(events);
     }
 
