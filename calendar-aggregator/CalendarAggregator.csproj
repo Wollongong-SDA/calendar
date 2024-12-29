@@ -5,8 +5,9 @@
     <Nullable>enable</Nullable>
     <RootNamespace>CalendarAggregator</RootNamespace>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <PublishAot>true</PublishAot>
-	<EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <!-- <PublishAot>true</PublishAot> -->
+    <!-- <OptimizationPreference>Speed</OptimizationPreference> -->
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
   </PropertyGroup>
 
   <ItemGroup>
