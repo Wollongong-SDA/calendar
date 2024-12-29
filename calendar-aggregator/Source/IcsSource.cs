@@ -1,11 +1,11 @@
-﻿using Ical.Net;
-using Ical.Net.CalendarComponents;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
 
-namespace CalendarAggregator.Utilities
+namespace CalendarAggregator.Source
 {
     public class IcsSource : Source
     {

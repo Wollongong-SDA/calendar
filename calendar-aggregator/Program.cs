@@ -1,4 +1,3 @@
-using CalendarAggregator.Utilities;
 using Ical.Net;
 using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Builder;
@@ -6,15 +5,16 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CalendarAggregator.Source;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var app = builder.Build();
 List<Source> calendarMappings = [
-    new IcsSource
+    new Microsoft365GroupSource(builder.Configuration.GetSection("WollongongSDAEntra"))
     {
         FriendlyName = "Pathfinders",
-        Guid = new Guid("a78d5d36-4192-496d-b2b5-83203a2174ae"),
-        IcsUrl = ""
+        Guid = new Guid("58e4f071-6ff4-4a60-8ee6-20594de0e68c"),
+        GroupId = "b843c94a-1d07-4016-be58-8d23d49e8fc4"
     }
 ];
 

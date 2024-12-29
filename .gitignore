@@ -401,3 +401,10 @@ FodyWeavers.xsd
 
 # Mac
 .DS_Store
+
+# App Settings because I'm lazy
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+/calendar-aggregator/appsettings.json
+/calendar-aggregator/appsettings.Development.json

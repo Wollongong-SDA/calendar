@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ical.Net.CalendarComponents;
 
-namespace CalendarAggregator.Utilities
+namespace CalendarAggregator.Source
 {
     public abstract class Source
     {
