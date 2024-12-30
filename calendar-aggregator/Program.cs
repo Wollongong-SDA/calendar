@@ -10,6 +10,9 @@ using System.Linq;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var app = builder.Build();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 var graphConfig = builder.Configuration.GetSection("GraphCredentials");
 List<Source> calendarMappings = [];
 
@@ -41,7 +44,7 @@ foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildr
     Console.WriteLine($"CALENDAR: {calendar["FriendlyName"]} configured as {calendar["Guid"]}");
 }
 
-app.MapGet("/calendar", async (HttpContext context) =>
+app.MapGet("/calendar.ics", async (HttpContext context) =>
 {
     List<string> calendars = [];
     if (context.Request.Query.TryGetValue("id", out var id))
@@ -83,5 +86,7 @@ app.MapGet("/calendar", async (HttpContext context) =>
     context.Response.ContentType = "text/calendar";
     await context.Response.WriteAsync(serializedCalendar);
 });
+
+app.MapFallbackToFile("/index.html");
 
 app.Run();

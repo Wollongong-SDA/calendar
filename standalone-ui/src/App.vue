@@ -1,0 +1,77 @@
+<script setup lang="ts">
+import DeviceDetector from "device-detector-js";
+import * as presetConfig from "./assets/config.json";
+import { ref } from "vue";
+import { Button, Checkbox, Panel } from "primevue";
+import { Icon } from "@iconify/vue";
+
+const selectedCategories = ref<string[]>([]);
+const getCustomConfig = (): any => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const customConfig = urlParams.get('data');
+  if (customConfig) return JSON.parse(atob(customConfig));
+  return null;
+};
+
+const deviceDetector = new DeviceDetector();
+const device = deviceDetector.parse(navigator.userAgent);
+const version = `${APP_VERSION}+${device.os?.name}${device.os?.version}/${device.client?.name}`;
+
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+let config = presetConfig;
+let customConfig = getCustomConfig();
+if (customConfig) {
+  customConfig = customConfig.map((preset: any) => {
+    preset.custom = true;
+    return preset;
+  });
+  config = {
+    ...config,
+    presets: [
+      ...config.presets,
+      ...customConfig
+    ]
+  };
+}
+
+const subscribe = () => {
+  document.location.href = `webcal://${document.location.host}/calendar.ics?id=${selectedCategories.value.join(",")}`;
+};
+</script>
+
+<template>
+  <div class="flex h-screen w-screen md:p-32 p-4">
+    <div class="flex-1 flex flex-col justify-center items-center gap-4">
+      <img :src="isDarkMode ? '/logo-dark.svg' : '/logo-light.svg'" class="h-16" />
+      <h1 class="text-5xl font-medium text-center leading-tight">My Church Calendar</h1>
+      <Panel class="text-xl my-3" header="AdSafe" v-if="customConfig">
+        <Icon icon="charm:shield-tick" class="inline-block italic text-cyan-400 text-3xl" />
+        You have been shared a private calendar. Please do not share this link with others.
+      </Panel>
+      <div v-for="category of config.presets" :key="category.id" class="flex items-center gap-2">
+        <Checkbox v-model="selectedCategories" :inputId="category.id" name="category" :value="category.name" />
+        <label :for="category.id" class="text-xl">
+          {{ category.name }}
+          <span v-if="category.recommended" class="inline-block text-teal-500">
+            <Icon icon="charm:circle-tick" class="inline-block italic mx-1" />Recommended
+          </span>
+          <span v-if="category.custom" class="inline-block text-cyan-500">
+            <Icon icon="charm:shield-tick" class="inline-block italic mx-1" />Private
+          </span>
+        </label>
+      </div>
+      <Button :disabled="!selectedCategories.length" @click="subscribe">Subscribe</Button>
+      <Panel header="Report an Error" class="w-full mt-2" toggleable :collapsed="true">
+        <p class="mb-2">
+          For technical help or to report an issue, please email <a :href="`mailto:${config.supportEmail}`">{{
+            config.supportEmail }}</a>.
+        </p>
+        <span class="text-slate-500">Client Version: <span style="font-family: monospace;">{{ version }}</span></span>
+      </Panel>
+
+    </div>
+  </div>
+</template>
+
+<style scoped></style>

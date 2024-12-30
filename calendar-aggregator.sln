@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarAggregator", "calendar-aggregator\CalendarAggregator.csproj", "{6A229FDD-99CF-4762-901C-AEF4566969DD}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "standalone-ui", "standalone-ui\standalone-ui.esproj", "{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEA372AC-27E8-4F2F-89E7-4DAB6D307D45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,12 @@ Global
 		{6A229FDD-99CF-4762-901C-AEF4566969DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A229FDD-99CF-4762-901C-AEF4566969DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A229FDD-99CF-4762-901C-AEF4566969DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC26CC8-71DC-444B-A49D-3B7936DD5E0F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
