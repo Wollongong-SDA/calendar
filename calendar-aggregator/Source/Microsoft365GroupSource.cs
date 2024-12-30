@@ -1,7 +1,6 @@
-﻿using Azure.Identity;
+﻿using CalendarAggregator.Util;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Kiota.Serialization;
@@ -12,22 +11,11 @@ using System.Threading.Tasks;
 
 namespace CalendarAggregator.Source
 {
-    public class Microsoft365GroupSource : Source
+    public class Microsoft365GroupSource(GraphCredentials config) : Source
     {
         public required string GroupId;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
-        public Microsoft365GroupSource(IConfiguration config)
-        {
-            var clientSecretCredential = new ClientSecretCredential(
-                config["tenantId"],
-                config["clientId"],
-                config["clientSecret"],
-                new ClientSecretCredentialOptions { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud }
-            );
-            _graphServiceClient = new GraphServiceClient(clientSecretCredential, ["https://graph.microsoft.com/.default"]);
-        }
+        private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(config);
 
         public override async Task<List<CalendarEvent>> GetEvents()
         {

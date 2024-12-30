@@ -1,8 +1,11 @@
 using CalendarAggregator.Source;
+using CalendarAggregator.Util;
 using Ical.Net;
 using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using System;
 using System.Collections.Generic;
@@ -13,35 +16,35 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-var graphConfig = builder.Configuration.GetSection("GraphCredentials");
 List<Source> calendarMappings = [];
 
-// TODO: Low priority to validate this here as we're in a rush, but probably should be done
 foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildren())
 {
     switch (calendar["Type"])
     {
-        case "MS365Group":
-            calendarMappings.Add(new Microsoft365GroupSource(graphConfig.GetSection(calendar["MS365GroupCred"]!))
+        case "Ms365Group":
+            var ms365GroupConfig = calendar.Get<Ms365GroupConfig>() ?? throw new InvalidConfigurationException("Invalid Ms365Group");
+            calendarMappings.Add(new Microsoft365GroupSource(GraphCredentials.Get(builder.Configuration, ms365GroupConfig.Ms365GroupCred))
             {
-                FriendlyName = calendar["FriendlyName"]!,
-                Guid = new Guid(calendar["Guid"]!),
-                GroupId = calendar["GroupId"]!
+                FriendlyName = ms365GroupConfig.FriendlyName,
+                Guid = new Guid(ms365GroupConfig.Guid),
+                GroupId = ms365GroupConfig.GroupId
             });
             break;
-        case "ICS":
+        case "Ics":
+            var icsConfig = calendar.Get<IcsConfig>() ?? throw new InvalidConfigurationException("Invalid Ics");
             calendarMappings.Add(new IcsSource()
             {
-                FriendlyName = calendar["FriendlyName"]!,
-                Guid = new Guid(calendar["Guid"]!),
-                IcsUrl = calendar["IcsUrl"]!
+                FriendlyName = icsConfig.FriendlyName,
+                Guid = new Guid(icsConfig.Guid),
+                IcsUrl = icsConfig.IcsUrl
             });
             break;
         default:
-            throw new InvalidConfigurationException("Unrecognised calendar Type");
+            throw new InvalidConfigurationException($"Invalid calendar Type (found {calendar["Type"]})");
     }
 
-    Console.WriteLine($"CALENDAR: {calendar["FriendlyName"]} configured as {calendar["Guid"]}");
+    app.Logger.LogInformation($"Calendar \"{calendar["FriendlyName"]}\" configured as {calendar["Guid"]}");
 }
 
 app.MapGet("/calendar.ics", async (HttpContext context) =>

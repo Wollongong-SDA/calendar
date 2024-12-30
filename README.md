@@ -35,14 +35,14 @@ Calendars is a list of calendars you want to aggregate (note some `Type`s have s
 ```json
 "Calendars": [
   {
-    "Type": "MS365Group",
+    "Type": "Ms365Group",
     "FriendlyName": "CalendarX",
     "Guid": "generate-some-id-here",
     "GroupId": "group-id",
-    "MS365GroupCred": "MyApp"
+    "Ms365GroupCred": "MyApp"
   },
   {
-    "Type": "ICS",
+    "Type": "Ics",
     "FriendlyName": "CalendarY",
     "Guid": "generate-some-id-here",
     "IcsUrl": "https://example.com/calendar.ics"
