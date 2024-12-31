@@ -23,11 +23,12 @@
   </ItemGroup>
 
   <Target Name="CopyDistToWwwroot" AfterTargets="Build">
-    <ItemGroup>
-      <DistFiles Include="..\standalone-ui\dist\**\*" />
-      <WwwrootFiles Include="wwwroot\**\*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(OutputPath)wwwroot\%(WwwrootFiles.RecursiveDir)" />
+	  <ItemGroup>
+		  <DistFiles Include="..\standalone-ui\dist\**\*" />
+		  <WwwrootFiles Include="wwwroot\**\*" />
+	  </ItemGroup>
+	  <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot\%(WwwrootFiles.RecursiveDir)" />
+	  <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(OutputPath)wwwroot\%(WwwrootFiles.RecursiveDir)" />
   </Target>
 	
 </Project>
