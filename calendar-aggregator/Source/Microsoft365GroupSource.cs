@@ -3,10 +3,10 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using Microsoft.Kiota.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CalendarAggregator.Source
@@ -29,6 +29,7 @@ namespace CalendarAggregator.Source
                         req.QueryParameters.EndDateTime = DateTime.UtcNow.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
                         req.QueryParameters.Top = 100;
                         req.Headers.Add("Prefer", @"outlook.body-content-type=""text""");
+                        req.QueryParameters.Select = ["subject", "body", "start", "end", "createddatetime", "lastmodifieddatetime", "icaluid"];
                     });
             }
             catch
@@ -39,22 +40,18 @@ namespace CalendarAggregator.Source
             if (response?.Value == null) return [];
 
             List<CalendarEvent> events = [];
-
-            foreach (var source in response.Value)
+            events.AddRange(response.Value.Select(source => new CalendarEvent
             {
-                var json = await source.SerializeAsJsonStringAsync();
-                events.Add(new CalendarEvent
-                {
-                    Summary = $"{source.Subject} ({FriendlyName})",
-                    Description = source.Body?.Content,
-                    DtStart = new CalDateTime(source.Start.ToDateTime(), source.Start?.TimeZone),
-                    DtEnd = new CalDateTime(source.End.ToDateTime(), source.End?.TimeZone),
-                    Created = new CalDateTime(source.CreatedDateTime!.Value.UtcDateTime),
-                    LastModified = new CalDateTime(source.LastModifiedDateTime!.Value.UtcDateTime),
-                    Organizer = new Organizer(FriendlyName),
-                    Uid = source.ICalUId
-                });
-            }
+                Summary = $"{source.Subject} ({FriendlyName})",
+                Description = source.Body?.Content,
+                DtStart = new CalDateTime(source.Start.ToDateTime(), source.Start?.TimeZone),
+                DtEnd = new CalDateTime(source.End.ToDateTime(), source.End?.TimeZone),
+                Created = new CalDateTime(source.CreatedDateTime!.Value.UtcDateTime),
+                LastModified = new CalDateTime(source.LastModifiedDateTime!.Value.UtcDateTime),
+                Organizer = new Organizer(FriendlyName),
+                Uid = source.ICalUId
+            }));
+
             return events;
         }
     }
