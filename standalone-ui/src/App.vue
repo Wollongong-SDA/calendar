@@ -50,7 +50,7 @@ const subscribe = () => {
         You have been shared a private calendar. Please do not share this link with others.
       </Panel>
       <div v-for="category of config.presets" :key="category.id" class="flex items-center gap-2">
-        <Checkbox v-model="selectedCategories" :inputId="category.id" name="category" :value="category.name" />
+        <Checkbox v-model="selectedCategories" :inputId="category.id" name="category" :value="category.id" />
         <label :for="category.id" class="text-xl">
           {{ category.name }}
           <span v-if="category.recommended" class="inline-block text-teal-500">
