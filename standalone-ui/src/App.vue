@@ -29,8 +29,8 @@ if (customConfig) {
   config = {
     ...config,
     presets: [
-      ...config.presets,
-      ...customConfig
+      ...customConfig,
+      ...config.presets
     ]
   };
 }
