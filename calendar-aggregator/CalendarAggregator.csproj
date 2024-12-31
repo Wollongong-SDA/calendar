@@ -27,8 +27,8 @@
 		  <DistFiles Include="..\standalone-ui\dist\**\*" />
 		  <WwwrootFiles Include="wwwroot\**\*" />
 	  </ItemGroup>
-      <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot\%(RecursiveDir)" />
-      <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(OutputPath)\wwwroot\%(RecursiveDir)" />
+      <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot\%(RecursiveDir)" SkipUnchangedFiles="false" UseHardlinksIfPossible="true" />
+      <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(OutputPath)\wwwroot\%(RecursiveDir)" SkipUnchangedFiles="false" UseHardlinksIfPossible="true" />
       </Target>
 	
 </Project>
