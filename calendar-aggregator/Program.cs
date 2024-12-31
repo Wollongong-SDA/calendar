@@ -66,6 +66,11 @@ app.MapGet("/calendar.ics", async (HttpContext context) =>
         ProductId = "-//WollongongSDA//Calendar Aggregator//EN" // subject to https://github.com/ical-org/ical.net/issues/531
     };
     masterCalendar.AddProperty("X-WR-CALNAME", "My Church Calendar");
+    masterCalendar.AddProperty("REFRESH-INTERVAL;VALUE=DURATION", "P4H");
+    masterCalendar.AddProperty("X-PUBLISHED-TTL", "P4H");
+    masterCalendar.AddProperty("COLOR", "#FF8800");
+    masterCalendar.AddProperty("IMAGE;VALUE=URI;DISPLAY=BADGE;FMTTYPE=image/png", $"{context.Request.Scheme}://{context.Request.Host}/favicon.png");
+    masterCalendar.AddProperty("URL", $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}");
 
     foreach (var item in calendars)
     {
