@@ -91,6 +91,12 @@ app.MapGet("/calendar.ics", async (HttpContext context) =>
     await context.Response.WriteAsync(serializedCalendar);
 });
 
+app.MapGet("/config", async (HttpContext context) =>
+{
+    context.Response.ContentType = "application/json";
+    await context.Response.WriteAsJsonAsync(calendars.Where(c => c.IsPrivate == false).Select(c => new { Name = c.FriendlyName, Recommended = c.IsRecommended, Id = c.Guid }));
+});
+
 app.MapFallbackToFile("/index.html");
 
 app.Run();

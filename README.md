@@ -60,16 +60,18 @@ Calendars is a list of calendars you want to aggregate (note some `Type`s have s
 ]
 ```
 
-| Property     | Description                         | Required | Types                    |
-| ------------ | ----------------------------------- | -------- | ------------------------ |
-| Type         | Determines type of calendar source  | ✅       | All                      |
-| FriendlyName | Display name                        | ✅       | All                      |
-| Guid         | Persistent identifier               | ✅       | All                      |
-| GroupId      | Entra Object Id                     | ✅       | Ms365Group               |
-| MailboxId    | Entra Object Id                     | ✅       | Ms365Mailbox             |
-| CalendarName | Calendar Display Name (in Exchange) |          | Ms365Mailbox             |
-| Ms365Cred    | `GraphCredentials` key              | ✅       | Ms365Group, Ms365Mailbox |
-| IcsUrl       | URL to ICS file                     | ✅       | Ics                      |
+| Property      | Description                                 | Default  | Type          | Required | Relevant Calendars       |
+| ------------- | ------------------------------------------- | -------- | ------------- | -------- | ------------------------ |
+| Type          | Determines type of calendar source          |          | string        | ✅       | All                      |
+| FriendlyName  | Display name                                |          | string        | ✅       | All                      |
+| Guid          | Persistent identifier                       |          | string (GUID) | ✅       | All                      |
+| IsPrivate     | If the calendar is displayed on the webpage | false    | bool          |          | All                      |
+| IsRecommended | If the calendar is recommended              | false    | bool          |          | All                      |
+| GroupId       | Entra Object Id                             |          | string        | ✅       | Ms365Group               |
+| MailboxId     | Entra Object Id                             |          | string        | ✅       | Ms365Mailbox             |
+| CalendarName  | Calendar Display Name (in Exchange)         | Calendar | string        |          | Ms365Mailbox             |
+| Ms365Cred     | `GraphCredentials` key                      |          | string        | ✅       | Ms365Group, Ms365Mailbox |
+| IcsUrl        | URL to ICS file                             |          | string        | ✅       | Ics                      |
 
 Note that for Ms365Mailbox, the CalendarName defaults to Calendar, however it is recommended to be explicit.
 

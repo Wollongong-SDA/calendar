@@ -1,39 +1,48 @@
 <script setup lang="ts">
 import DeviceDetector from "device-detector-js";
-import * as presetConfig from "./assets/config.json";
-import { ref } from "vue";
+import { onMounted, ref, shallowRef } from "vue";
 import { Button, Checkbox, Panel } from "primevue";
 import { Icon } from "@iconify/vue";
+import type { Config, Preset } from "./types/config";
 
 const selectedCategories = ref<string[]>([]);
-const getCustomConfig = (): any => {
+const getCustomConfig = (): Preset[] | null => {
   const urlParams = new URLSearchParams(window.location.search)
   const customConfig = urlParams.get('data');
-  if (customConfig) return JSON.parse(atob(customConfig));
+  if (customConfig) return JSON.parse(atob(customConfig)) as Preset[];
   return null;
 };
 
 const deviceDetector = new DeviceDetector();
 const device = deviceDetector.parse(navigator.userAgent);
-const version = `${APP_VERSION}+${device.os?.name}${device.os?.version}/${device.client?.name}`;
+const version = `${device.os?.name}${device.os?.version}/${device.client?.name}`;
 
 const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-let config = presetConfig;
-let customConfig = getCustomConfig();
-if (customConfig) {
-  customConfig = customConfig.map((preset: any) => {
-    preset.custom = true;
-    return preset;
-  });
-  config = {
-    ...config,
-    presets: [
-      ...customConfig,
-      ...config.presets
-    ]
-  };
-}
+let config = shallowRef<Config>({
+  presets: [],
+  supportEmail: "",
+  coordinatorEmail: ""
+})
+
+onMounted(async () => {
+  if (import.meta.env.PROD) {
+    config.value = await fetch("/config").then((res) => res.json());
+  } else {
+    config.value = await import("./assets/config.json");
+  }
+  let customConfig = getCustomConfig();
+  if (customConfig) {
+    customConfig = customConfig.map((preset: any) => {
+      preset.custom = true;
+      return preset;
+    });
+    config.value = {
+      ...config.value,
+      presets: [...config.value.presets, ...customConfig]
+    };
+  }
+});
 
 const subscribe = () => {
   const sortedCategories = selectedCategories.value;
@@ -49,7 +58,7 @@ const subscribe = () => {
     <div class="flex-1 flex flex-col justify-center items-center gap-4">
       <img :src="isDarkMode ? '/logo-dark.svg' : '/logo-light.svg'" class="h-16" />
       <h1 class="text-5xl font-medium text-center leading-tight">My Church Calendar</h1>
-      <Panel class="text-xl my-3" header="AdSafe" v-if="customConfig">
+      <Panel class="text-xl my-3" header="AdSafe" v-if="config.presets.find(preset => preset.custom)">
         <Icon icon="charm:shield-tick" class="inline-block italic text-cyan-400 text-3xl" />
         You have been shared a private calendar. Please do not share this link with others.
       </Panel>
@@ -71,9 +80,8 @@ const subscribe = () => {
           For technical help or to report an issue, please email <a :href="`mailto:${config.supportEmail}`">{{
             config.supportEmail }}</a>.
         </p>
-        <span class="text-slate-500">Client Version: <span style="font-family: monospace;">{{ version }}</span></span>
+        <span class="text-slate-500" style="font-family: monospace;">{{ version }}</span>
       </Panel>
-
     </div>
   </div>
 </template>
