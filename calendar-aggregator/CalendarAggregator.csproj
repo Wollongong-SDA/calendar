@@ -22,6 +22,10 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
   <Target Name="CopyDistToWwwroot" AfterTargets="Build">
 	  <ItemGroup>
 		  <DistFiles Include="..\standalone-ui\dist\**\*" />
