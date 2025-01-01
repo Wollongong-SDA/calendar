@@ -18,7 +18,7 @@
 }
 ```
 
-GraphCredentials is a dictionary with a name and your App Registration details. You can use multiple App Registrations for different tenancies as required.
+GraphCredentials is a dictionary with a name and your App Registration details. You can use multiple App Registrations for different tenancies or consent configurations as required.
 
 > Graph credentials require Application scopes using client secrets, delegated authentication is not supported nor intended to be. At the moment, the `Calendars.Read`, `User.Read.All`, and `Group.Read.All` scopes are required to be configured for the app registration and must be consented to for the entire organisation. There is a possibility of granular permissions by consenting to specific accounts for personal calendars, however this is not actively supported since we mainly rely on Group calendars.
 
@@ -60,12 +60,22 @@ Calendars is a list of calendars you want to aggregate (note some `Type`s have s
 ]
 ```
 
-Note that for Ms365Mailbox, the CalendarName defaults to Calendar, however it is recommended to be explicit.
+| Property     | Description                         | Required | Types                    |
+| ------------ | ----------------------------------- | -------- | ------------------------ |
+| Type         | Determines type of calendar source  | ✅       | All                      |
+| FriendlyName | Display name                        | ✅       | All                      |
+| Guid         | Persistent identifier               | ✅       | All                      |
+| GroupId      | Entra Object Id                     | ✅       | Ms365Group               |
+| MailboxId    | Entra Object Id                     | ✅       | Ms365Mailbox             |
+| CalendarName | Calendar Display Name (in Exchange) |          | Ms365Mailbox             |
+| Ms365Cred    | `GraphCredentials` key              | ✅       | Ms365Group, Ms365Mailbox |
+| IcsUrl       | URL to ICS file                     | ✅       | Ics                      |
 
+Note that for Ms365Mailbox, the CalendarName defaults to Calendar, however it is recommended to be explicit.
 
 It is easiest to find the MS365 Guids in **_Entra or PowerShell_**. These are labelled as an "Object Id" (enabled on the default Group table view, needs the column to be manually added on Users).
 
 ## Internal Notes
 
-- **UPNs will *probably* work, however it is highly recommended to use an Object Id to avoid confusion with changing UPNs each year.**
-- Do **not** change Guids each year where possible *except* for Custom type calendars (which should be rotated annually).
+- **UPNs will _probably_ work, however it is highly recommended to use an Object Id to avoid confusion with changing UPNs each year.**
+- Do **not** change Guids each year where possible _except_ for Custom type calendars (which should be rotated annually).
