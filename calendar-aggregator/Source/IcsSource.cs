@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using CalendarAggregator.Util;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Ical.Net;
-using Ical.Net.CalendarComponents;
 
 namespace CalendarAggregator.Source
 {
-    public class IcsSource : Source
+    public class IcsSource(IcsConfig config) : Source(config)
     {
-        public required string IcsUrl;
+        public string IcsUrl { get; private set; } = config.IcsUrl;
         public override async Task<List<CalendarEvent>> GetEvents()
         {
             var ics = "";

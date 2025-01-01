@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace CalendarAggregator.Source
 {
-    public class Microsoft365GroupSource(GraphCredentials config) : Source
+    public class Microsoft365GroupSource(Ms365GroupConfig config, GraphCredentials credentialsConfig) : Source(config)
     {
-        public required string GroupId;
+        public string GroupId { get; private set; } = config.GroupId;
 
-        private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(config);
+        private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(credentialsConfig);
 
         public override async Task<List<CalendarEvent>> GetEvents()
         {

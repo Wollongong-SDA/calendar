@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 
 namespace CalendarAggregator.Source
 {
-    public class Microsoft365MailboxSource(GraphCredentials config) : Source
+    public class Microsoft365MailboxSource(Ms365MailboxConfig config, GraphCredentials credentialsConfig) : Source(config)
     {
-        public required string Mailbox;
-        public required string CalendarName;
+        public string MailboxId { get; private set; } = config.MailboxId;
+        public string CalendarName { get; private set; } = config.CalendarName;
 
-        private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(config);
+        private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(credentialsConfig);
 
         public override async Task<List<CalendarEvent>> GetEvents()
         {
             EventCollectionResponse? response;
             try
             {
-                response = await _graphServiceClient.Users[Mailbox].Calendars[CalendarName].CalendarView.GetAsync(
+                response = await _graphServiceClient.Users[MailboxId].Calendars[CalendarName].CalendarView.GetAsync(
                     (req) =>
                     {
                         req.QueryParameters.StartDateTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);

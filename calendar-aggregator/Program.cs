@@ -10,13 +10,14 @@ using Microsoft.IdentityModel.Protocols.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+// ReSharper disable StringLiteralTypo
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-List<Source> calendarMappings = [];
+List<Source> calendars = [];
 
 foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildren())
 {
@@ -24,31 +25,15 @@ foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildr
     {
         case "Ms365Group":
             var ms365GroupConfig = calendar.Get<Ms365GroupConfig>() ?? throw new InvalidConfigurationException("Invalid Ms365Group");
-            calendarMappings.Add(new Microsoft365GroupSource(GraphCredentials.Get(builder.Configuration, ms365GroupConfig.Ms365Cred))
-            {
-                FriendlyName = ms365GroupConfig.FriendlyName,
-                Guid = new Guid(ms365GroupConfig.Guid),
-                GroupId = ms365GroupConfig.GroupId
-            });
+            calendars.Add(new Microsoft365GroupSource(ms365GroupConfig, GraphCredentials.Get(builder.Configuration, ms365GroupConfig.Ms365Cred)));
             break;
         case "Ms365Mailbox":
             var ms365MailboxConfig = calendar.Get<Ms365MailboxConfig>() ?? throw new InvalidConfigurationException("Invalid Ms365Mailbox");
-            calendarMappings.Add(new Microsoft365MailboxSource(GraphCredentials.Get(builder.Configuration, ms365MailboxConfig.Ms365Cred))
-            {
-                FriendlyName = ms365MailboxConfig.FriendlyName,
-                Guid = new Guid(ms365MailboxConfig.Guid),
-                Mailbox = ms365MailboxConfig.MailboxId,
-                CalendarName = ms365MailboxConfig.CalendarName
-            });
+            calendars.Add(new Microsoft365MailboxSource(ms365MailboxConfig, GraphCredentials.Get(builder.Configuration, ms365MailboxConfig.Ms365Cred)));
             break;
         case "Ics":
             var icsConfig = calendar.Get<IcsConfig>() ?? throw new InvalidConfigurationException("Invalid Ics");
-            calendarMappings.Add(new IcsSource()
-            {
-                FriendlyName = icsConfig.FriendlyName,
-                Guid = new Guid(icsConfig.Guid),
-                IcsUrl = icsConfig.IcsUrl
-            });
+            calendars.Add(new IcsSource(icsConfig));
             break;
         default:
             throw new InvalidConfigurationException($"Invalid calendar Type (found {calendar["Type"]})");
@@ -59,12 +44,12 @@ foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildr
 
 app.MapGet("/calendar.ics", async (HttpContext context) =>
 {
-    List<string> calendars = [];
+    List<string> requestedCalendars = [];
     if (context.Request.Query.TryGetValue("id", out var id))
     {
-        calendars.AddRange(id.ToString().Split(","));
+        requestedCalendars.AddRange(id.ToString().Split(","));
     }
-    if (calendars.Count == 0)
+    if (requestedCalendars.Count == 0)
     {
         context.Response.StatusCode = 400;
         await context.Response.WriteAsync("ID missing");
@@ -82,15 +67,16 @@ app.MapGet("/calendar.ics", async (HttpContext context) =>
     masterCalendar.AddProperty("IMAGE;VALUE=URI;DISPLAY=BADGE;FMTTYPE=image/png", $"{context.Request.Scheme}://{context.Request.Host}/favicon.png");
     masterCalendar.AddProperty("URL", $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}");
 
-    foreach (var item in calendars)
+    foreach (var item in requestedCalendars)
     {
-        if (!Guid.TryParse(item, out var guid) || !calendarMappings.Any(x => x.Guid == guid))
+        // ReSharper disable once SimplifyLinqExpressionUseAll
+        if (!Guid.TryParse(item, out var guid) || !calendars.Any(x => x.Guid == guid))
         {
             context.Response.StatusCode = 400;
             await context.Response.WriteAsync("ID invalid");
             return;
         }
-        var mapping = calendarMappings.First(x => x.Guid == guid);
+        var mapping = calendars.First(x => x.Guid == guid);
 
         var events = await mapping.GetEvents();
         events.ForEach(e => e.AddProperty("X-WSDA-MAP", mapping.Guid.ToString()));

@@ -7,6 +7,8 @@ namespace CalendarAggregator.Util
         public required string Guid { get; set; }
         public required string FriendlyName { get; set; }
         public required string Type { get; set; }
+        public required bool IsPrivate { get; set; } = false;
+        public required bool IsRecommended { get; set; } = false;
     }
 
     public sealed class IcsConfig: SourceConfig
