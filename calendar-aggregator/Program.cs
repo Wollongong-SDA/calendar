@@ -93,8 +93,14 @@ app.MapGet("/calendar.ics", async (HttpContext context) =>
 
 app.MapGet("/config", async (HttpContext context) =>
 {
+    var presets = calendars.Where(c => c.IsPrivate == false)
+        .Select(c => new { Name = c.FriendlyName, Recommended = c.IsRecommended, Id = c.Guid });
     context.Response.ContentType = "application/json";
-    await context.Response.WriteAsJsonAsync(calendars.Where(c => c.IsPrivate == false).Select(c => new { Name = c.FriendlyName, Recommended = c.IsRecommended, Id = c.Guid }));
+    await context.Response.WriteAsJsonAsync(new
+    {
+        presets,
+        SupportEmail = builder.Configuration["Branding:SupportEmail"] ?? "multimedia@illawarraadventist.org"
+    });
 });
 
 app.MapFallbackToFile("/index.html");

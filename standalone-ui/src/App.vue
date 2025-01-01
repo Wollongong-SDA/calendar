@@ -26,7 +26,7 @@ let config = shallowRef<Config>({
 
 onMounted(async () => {
   if (import.meta.env.PROD) {
-    config.value.presets = await fetch("/config").then((res) => res.json());
+    config.value = await fetch("/config").then((res) => res.json())
   } else {
     config.value = await import("./assets/config.json");
   }
