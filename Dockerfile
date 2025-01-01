@@ -23,6 +23,6 @@ RUN dotnet publish -a $TARGETARCH --no-restore -o /app /calendar-aggregator/Cale
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled
 EXPOSE 8080
-WORKDIR /app
-COPY --link --from=build /app ./calendar-aggregator
-ENTRYPOINT ["./calendar-aggregator"]
+COPY --link --from=build /app /app/calendar-aggregator
+WORKDIR /app/calendar-aggregator
+ENTRYPOINT ["./CalendarAggregator"]
