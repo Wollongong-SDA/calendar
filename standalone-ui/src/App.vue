@@ -36,7 +36,11 @@ if (customConfig) {
 }
 
 const subscribe = () => {
-  document.location.href = `webcal://${document.location.host}/calendar.ics?id=${selectedCategories.value.join(",")}`;
+  const sortedCategories = selectedCategories.value;
+  sortedCategories.sort();
+  const subscription = `webcal://${document.location.host}/calendar.ics?id=${sortedCategories.join(",")}`
+  console.debug("Subscription link: ", subscription);
+  document.location.href = subscription;
 };
 </script>
 
