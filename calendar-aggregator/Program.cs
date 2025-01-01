@@ -24,11 +24,21 @@ foreach (var calendar in builder.Configuration.GetSection("Calendars").GetChildr
     {
         case "Ms365Group":
             var ms365GroupConfig = calendar.Get<Ms365GroupConfig>() ?? throw new InvalidConfigurationException("Invalid Ms365Group");
-            calendarMappings.Add(new Microsoft365GroupSource(GraphCredentials.Get(builder.Configuration, ms365GroupConfig.Ms365GroupCred))
+            calendarMappings.Add(new Microsoft365GroupSource(GraphCredentials.Get(builder.Configuration, ms365GroupConfig.Ms365Cred))
             {
                 FriendlyName = ms365GroupConfig.FriendlyName,
                 Guid = new Guid(ms365GroupConfig.Guid),
                 GroupId = ms365GroupConfig.GroupId
+            });
+            break;
+        case "Ms365Mailbox":
+            var ms365MailboxConfig = calendar.Get<Ms365MailboxConfig>() ?? throw new InvalidConfigurationException("Invalid Ms365Mailbox");
+            calendarMappings.Add(new Microsoft365MailboxSource(GraphCredentials.Get(builder.Configuration, ms365MailboxConfig.Ms365Cred))
+            {
+                FriendlyName = ms365MailboxConfig.FriendlyName,
+                Guid = new Guid(ms365MailboxConfig.Guid),
+                Mailbox = ms365MailboxConfig.MailboxId,
+                CalendarName = ms365MailboxConfig.CalendarName
             });
             break;
         case "Ics":

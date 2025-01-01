@@ -17,6 +17,13 @@ namespace CalendarAggregator.Util
     public sealed class Ms365GroupConfig : SourceConfig
     {
         public required string GroupId { get; set; }
-        public required string Ms365GroupCred { get; set; }
+        public required string Ms365Cred { get; set; }
+    }
+
+    public sealed class Ms365MailboxConfig : SourceConfig
+    {
+        public required string MailboxId { get; set; }
+        public string CalendarName { get; set; } = "Calendar";
+        public required string Ms365Cred { get; set; }
     }
 }
