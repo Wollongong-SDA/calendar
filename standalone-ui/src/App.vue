@@ -58,24 +58,29 @@ const subscribe = () => {
   <div class="flex h-screen w-screen md:p-32 p-4">
     <div class="flex-1 flex flex-col justify-center items-center gap-4">
       <img :src="isDarkMode ? '/logo-dark.svg' : '/logo-light.svg'" class="h-16" />
-      <h1 class="text-5xl font-medium text-center leading-tight">My Church Calendar</h1>
+      <h1 class="text-4xl font-medium text-center leading-tight">My Church Calendar</h1>
       <Panel class="text-xl my-3" header="AdSafe" v-if="config.presets.find(preset => preset.custom)">
-        <Icon icon="charm:shield-tick" class="inline-block italic text-cyan-400 text-3xl" />
+        <Icon icon="charm:shield-tick" class="inline-block italic text-cyan-600 dark:text-cyan-500 text-2xl" />
         You have been shared a private calendar. Please do not share this link with others.
       </Panel>
-      <div v-for="category of config.presets" :key="category.id" class="flex items-center gap-2">
-        <Checkbox v-model="selectedCategories" :inputId="category.id" name="category" :value="category.id" />
-        <label :for="category.id" class="text-xl">
-          {{ category.name }}
-          <span v-if="category.recommended" class="inline-block text-teal-500">
-            <Icon icon="charm:circle-tick" class="inline-block italic mx-1" />Recommended
-          </span>
-          <span v-if="category.custom" class="inline-block text-cyan-500">
-            <Icon icon="charm:shield-tick" class="inline-block italic mx-1" />Private
-          </span>
-        </label>
+      <div v-if="config.presets.length > 0" class="place-items-center flex flex-col gap-2">
+        <div v-for="category of config.presets" :key="category.id" class="flex items-center gap-2">
+          <Checkbox v-model="selectedCategories" :inputId="category.id" name="category" :value="category.id" />
+          <label :for="category.id" class="text-xl">
+            {{ category.name }}
+            <span v-if="category.recommended" class="inline-block text-teal-600 dark:text-teal-500">
+              <Icon icon="charm:circle-tick" class="inline-block italic mx-1" />Recommended
+            </span>
+            <span v-if="category.custom" class="inline-block text-cyan-600 dark:text-cyan-500">
+              <Icon icon="charm:shield-tick" class="inline-block italic mx-1" />Private
+            </span>
+          </label>
+        </div>
+        <Button :disabled="!selectedCategories.length" @click="subscribe" class="mt-4">Subscribe</Button>
       </div>
-      <Button :disabled="!selectedCategories.length" @click="subscribe">Subscribe</Button>
+      <div v-else class="text-xl">
+        No calendars have been made available yet.
+      </div>
       <Panel header="Report an Error" class="w-full mt-2" toggleable :collapsed="true">
         <p class="mb-2">
           For technical help or to report an issue, please email <a :href="`mailto:${config.supportEmail}`">{{
