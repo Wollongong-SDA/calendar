@@ -21,8 +21,7 @@ const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 let config = shallowRef<Config>({
   presets: [],
-  supportEmail: "",
-  coordinatorEmail: ""
+  supportEmail: ""
 })
 
 onMounted(async () => {

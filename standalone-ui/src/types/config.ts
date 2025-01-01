@@ -1,7 +1,6 @@
 export type Config = {
   presets: Preset[],
-  supportEmail: string,
-  coordinatorEmail: string,
+  supportEmail: string
 }
 
 export type Preset = {
