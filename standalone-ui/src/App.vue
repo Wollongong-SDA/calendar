@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DeviceDetector from "device-detector-js";
-import { onMounted, ref, shallowRef } from "vue";
+import { onMounted, ref, shallowRef, triggerRef } from "vue";
 import { Button, Checkbox, Panel } from "primevue";
 import { Icon } from "@iconify/vue";
 import type { Config, Preset } from "./types/config";
@@ -27,7 +27,7 @@ let config = shallowRef<Config>({
 
 onMounted(async () => {
   if (import.meta.env.PROD) {
-    config.value = await fetch("/config").then((res) => res.json());
+    config.value.presets = await fetch("/config").then((res) => res.json());
   } else {
     config.value = await import("./assets/config.json");
   }
@@ -42,6 +42,7 @@ onMounted(async () => {
       presets: [...config.value.presets, ...customConfig]
     };
   }
+  triggerRef(config)
 });
 
 const subscribe = () => {
