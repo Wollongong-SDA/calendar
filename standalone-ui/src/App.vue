@@ -2,9 +2,10 @@
 // TODO: Remove DeviceDetector for a .NET alternative
 import DeviceDetector from "device-detector-js";
 import { onMounted, ref, shallowRef, triggerRef } from "vue";
-import { Button, Checkbox, Panel } from "primevue";
+import { Checkbox, Panel } from "primevue";
 import { Icon } from "@iconify/vue";
 import type { Config, Preset } from "./types/config";
+import CalendarButton from "./components/CalendarButton.vue";
 
 const selectedCategories = ref<string[]>([]);
 const getCustomConfig = (): Preset[] | null => {
@@ -44,14 +45,6 @@ onMounted(async () => {
   }
   triggerRef(config)
 });
-
-const subscribe = () => {
-  const sortedCategories = selectedCategories.value;
-  sortedCategories.sort();
-  const subscription = `webcal://${document.location.host}/calendar.ics?id=${sortedCategories.join(",")}`
-  console.debug("Subscription link: ", subscription);
-  document.location.href = subscription;
-};
 </script>
 
 <template>
@@ -76,7 +69,7 @@ const subscribe = () => {
             </span>
           </label>
         </div>
-        <Button :disabled="!selectedCategories.length" @click="subscribe" class="mt-4">Subscribe</Button>
+        <CalendarButton :disabled="!selectedCategories.length" :getIds="selectedCategories" :os="device.os?.name" />
       </div>
       <div v-else class="text-xl">
         No calendars have been made available yet.
@@ -92,4 +85,3 @@ const subscribe = () => {
   </div>
 </template>
 
-<style scoped></style>
