@@ -66,6 +66,7 @@ app.MapGet("/calendar.ics", async (HttpContext context) =>
     masterCalendar.AddProperty("COLOR", "#FF8800");
     masterCalendar.AddProperty("IMAGE;VALUE=URI;DISPLAY=BADGE;FMTTYPE=image/png", $"{context.Request.Scheme}://{context.Request.Host}/favicon.png");
     masterCalendar.AddProperty("URL", $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}");
+    masterCalendar.AddTimeZone("Australia/Sydney");
 
     foreach (var item in requestedCalendars)
     {
