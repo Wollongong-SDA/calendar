@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: Remove DeviceDetector for a .NET alternative
 import DeviceDetector from "device-detector-js";
 import { onMounted, ref, shallowRef, triggerRef } from "vue";
 import { Button, Checkbox, Panel } from "primevue";
