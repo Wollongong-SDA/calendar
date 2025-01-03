@@ -79,7 +79,7 @@ onMounted(async () => {
           For technical help or to report an issue, please email <a :href="`mailto:${config.supportEmail}`">{{
             config.supportEmail }}</a>.
         </p>
-        <span class="text-slate-500" style="font-family: monospace;">{{ version }}</span>
+        <span class="text-slate-500" style="font-family: monospace;">Client-{{ version }}</span>
       </Panel>
     </div>
   </div>

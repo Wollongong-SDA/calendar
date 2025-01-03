@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref } from "vue";
+import { computed, ref } from "vue";
 import { Button, Dialog, InputText, SplitButton } from "primevue";
 import type { MenuItem } from "primevue/menuitem";
 const props = defineProps({
@@ -11,42 +11,25 @@ const props = defineProps({
   os: String
 });
 
-const androidDialog = ref(false);
+const androidDialog = ref(props.os == "Android");
 const copyDialog = ref(false);
 const copySuccessDialog = ref(false);
 
 const getLink = computed((): string => {
   const sortedCategories = props.getIds;
   sortedCategories.sort();
-  const link = `webcal://${document.location.host}/calendar.ics?id=${sortedCategories.join(",")}`
+  const link = `${document.location.host}/calendar.ics?id=${sortedCategories.join(",")}`
   console.debug(link);
   return link;
 });
 
-const subscribeButton = () => {
-  if (props.os === "Android") {
-    androidDialog.value = true;
-    return;
-  }
-  subscribe();
-};
+const subscribe = () => document.location.href = 'webcal://' + getLink.value;
 
-const subscribe = () => {
-  document.location.href = getLink.value;
-};
+const googleCalendar = () => document.location.href = 'https://calendar.google.com/calendar/render?cid=' + encodeURIComponent('webcal://' + getLink.value);
 
-const googleCalendar = () => {
-  document.location.href = 'https://www.google.com/calendar/render?cid=' + encodeURIComponent(getLink.value);
-};
+const outlook = () => document.location.href = 'https://outlook.office.com/calendar/0/addfromweb/?url=' + encodeURIComponent('webcal://' + getLink.value);
 
-const outlook = () => {
-  // outlook.live.com redirects to homepage if not signed in, outlook.office.com prefers Work/School accounts but work with personal accounts too
-  document.location.href = 'https://outlook.office.com/calendar/0/addfromweb/?url=' + encodeURIComponent(getLink.value);
-};
-
-const copyLink = () => {
-  navigator.clipboard.writeText(getLink.value).then(() => copySuccessDialog.value = true).catch(() => copyDialog.value = true);
-};
+const copyLink = () => navigator.clipboard.writeText('webcal://' + getLink.value).then(() => copySuccessDialog.value = true).catch(() => copyDialog.value = true);
 
 const buttons: MenuItem[] = [
   {
@@ -56,11 +39,13 @@ const buttons: MenuItem[] = [
   },
   {
     label: "Add to Google Calendar",
-    command: googleCalendar
+    command: googleCalendar,
+    visible: props.os != "Android"
   },
   {
     label: "Add to Outlook",
-    command: outlook
+    command: outlook,
+    visible: props.os != "Android" && props.os != "iOS"
   },
   {
     label: "Copy Link",
@@ -70,18 +55,17 @@ const buttons: MenuItem[] = [
 </script>
 
 <template>
-  <SplitButton :disabled="disabled" @click="subscribeButton" class="mt-4" label="Subscribe" :model="buttons" />
+  <SplitButton :disabled="disabled" @click="subscribe" class="mt-4" label="Subscribe" :model="buttons" />
 
   <!-- Android -->
   <Dialog :visible="androidDialog" modal header="Android" :closable="false" :draggable="false"
     :style="{ width: '25rem' }">
-    <div class="flex items-center gap-4 mb-4">
-      Most Android devices do not support automatic calendar subscriptions. You can still add the calendar using Google,
-      Outlook or other preferred calendars by copying the link.
+    <div class="flex items-center mb-4">
+      Android devices do not support automatic calendar subscriptions. We recommend using a desktop to add to Google /
+      Outlook, or copying the link to manually subscribe.
     </div>
-    <div class="flex justify-end gap-2">
-      <Button label="Subscribe" severity="secondary" @click="androidDialog = false; subscribe()" />
-      <Button label="Copy Link" @click="androidDialog = false; copyLink()" />
+    <div class="flex justify-end">
+      <Button label="Continue" severity="primary" @click="androidDialog = false" />
     </div>
   </Dialog>
 
