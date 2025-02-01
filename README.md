@@ -48,7 +48,7 @@ Calendars is a list of calendars you want to aggregate (note some `Type`s have s
     "FriendlyName": "CalendarY",
     "Guid": "generate-some-id-here",
     "MailboxId": "mailbox-id",
-    "CalendarName": "Calendar",
+    "CalendarId": "verylongstring",
     "Ms365Cred": "MyApp"
   },
   {
@@ -69,11 +69,11 @@ Calendars is a list of calendars you want to aggregate (note some `Type`s have s
 | IsRecommended | If the calendar is recommended              | false    | bool          |          | All                      |
 | GroupId       | Entra Object Id                             |          | string        | ✅       | Ms365Group               |
 | MailboxId     | Entra Object Id                             |          | string        | ✅       | Ms365Mailbox             |
-| CalendarName  | Calendar Display Name (in Exchange)         | Calendar | string        |          | Ms365Mailbox             |
+| CalendarId  | Calendar Display Name (in Exchange)         | Calendar | string        |          | Ms365Mailbox             |
 | Ms365Cred     | `GraphCredentials` key                      |          | string        | ✅       | Ms365Group, Ms365Mailbox |
 | IcsUrl        | URL to ICS file                             |          | string        | ✅       | Ics                      |
 
-Note that for Ms365Mailbox, the CalendarName defaults to Calendar, however it is recommended to be explicit.
+Note that for Ms365Mailbox, the CalendarId defaults to Calendar, however it is recommended to be explicit with the Calendar ID (can be found from the Graph Explorer).
 
 It is easiest to find the MS365 Guids in **_Entra or PowerShell_**. These are labelled as an "Object Id" (enabled on the default Group table view, needs the column to be manually added on Users).
 

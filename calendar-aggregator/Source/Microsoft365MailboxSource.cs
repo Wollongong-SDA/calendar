@@ -14,7 +14,7 @@ namespace CalendarAggregator.Source
     public class Microsoft365MailboxSource(Ms365MailboxConfig config, GraphCredentials credentialsConfig) : Source(config)
     {
         public string MailboxId { get; private set; } = config.MailboxId;
-        public string CalendarName { get; private set; } = config.CalendarName;
+        public string CalendarId { get; private set; } = config.CalendarId;
 
         private readonly GraphServiceClient _graphServiceClient = GraphServiceBuilder.GetGraphService(credentialsConfig);
 
@@ -23,7 +23,7 @@ namespace CalendarAggregator.Source
             EventCollectionResponse? response;
             try
             {
-                response = await _graphServiceClient.Users[MailboxId].Calendars[CalendarName].CalendarView.GetAsync(
+                response = await _graphServiceClient.Users[MailboxId].Calendars[CalendarId].CalendarView.GetAsync(
                     (req) =>
                     {
                         req.QueryParameters.StartDateTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
