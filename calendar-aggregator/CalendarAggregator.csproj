@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>CalendarAggregator</RootNamespace>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <!-- <PublishAot>true</PublishAot> -->
-    <!-- <OptimizationPreference>Speed</OptimizationPreference> -->
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
   </PropertyGroup>
 
@@ -27,12 +24,11 @@
   </ItemGroup>
 
   <Target Name="CopyDistToWwwroot" AfterTargets="Build">
-	  <ItemGroup>
-		  <DistFiles Include="..\standalone-ui\dist\**\*" />
-		  <WwwrootFiles Include="wwwroot\**\*" />
-	  </ItemGroup>
+    <ItemGroup>
+      <DistFiles Include="..\standalone-ui\dist\**\*" />
+      <WwwrootFiles Include="wwwroot\**\*" />
+    </ItemGroup>
       <Copy SourceFiles="@(DistFiles)" DestinationFolder="wwwroot\%(RecursiveDir)" SkipUnchangedFiles="false" UseHardlinksIfPossible="true" />
       <Copy SourceFiles="@(DistFiles)" DestinationFolder="$(OutputPath)\wwwroot\%(RecursiveDir)" SkipUnchangedFiles="false" UseHardlinksIfPossible="true" />
-      </Target>
-	
+  </Target>	
 </Project>
