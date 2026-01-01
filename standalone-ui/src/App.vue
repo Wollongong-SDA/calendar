@@ -48,7 +48,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex h-screen w-screen md:p-32 p-4">
+  <div class="flex h-screen w-screen md:p-24 p-4 container mx-auto">
     <div class="flex-1 flex flex-col justify-center items-center gap-4">
       <img :src="isDarkMode ? '/logo-dark.svg' : '/logo-light.svg'" class="h-16" />
       <h1 class="text-4xl font-medium text-center leading-tight">My Church Calendar</h1>
@@ -74,7 +74,7 @@ onMounted(async () => {
       <div v-else class="text-xl">
         No calendars have been made available yet.
       </div>
-      <Panel header="Report an Error" class="w-full mt-2" toggleable :collapsed="true">
+      <Panel header="Report an Error" class="w-full mt-2 max-w-3xl" toggleable :collapsed="true" >
         <p class="mb-2">
           For technical help or to report an issue, please email <a :href="`mailto:${config.supportEmail}`">{{
             config.supportEmail }}</a>.
