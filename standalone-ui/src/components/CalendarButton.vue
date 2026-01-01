@@ -11,7 +11,7 @@ const props = defineProps({
   os: String
 });
 
-const androidDialog = ref(props.os == "Android");
+const androidDialog = ref(true);
 const copyDialog = ref(false);
 const copySuccessDialog = ref(false);
 
@@ -61,8 +61,8 @@ const buttons: MenuItem[] = [
   <Dialog :visible="androidDialog" modal header="Android" :closable="false" :draggable="false"
     :style="{ width: '25rem' }">
     <div class="flex items-center mb-4">
-      Android devices do not support automatic calendar subscriptions. We recommend using a desktop to add to Google /
-      Outlook, or copying the link to manually subscribe.
+      Android devices do not support automatic calendar subscriptions. Some apps may allow to copy the link to manually
+      subscribe, but we otherwise recommend using a desktop to add to Gmail / Outlook.
     </div>
     <div class="flex justify-end">
       <Button label="Continue" severity="primary" @click="androidDialog = false" />
